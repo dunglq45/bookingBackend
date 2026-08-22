@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 1. BẢNG USER (Phải giữ lại để chạy tính năng Đăng nhập/Đăng ký)
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  fullName  String
+  role      Role     @default(CUSTOMER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  appointments Appointment[] // Một người dùng có thể có nhiều lịch hẹn
+
+}
+
+// 2. BẢNG SERVICE (Bảng mới chúng ta cần thêm vào hôm nay)
+model Service {
+  id           String   @id @default(uuid()) // Tự sinh mã ID chuỗi bảo mật
+  name         String                        // Tên dịch vụ (Ví dụ: Cắt tóc nam)
+  description  String?                       // Mô tả chi tiết dịch vụ (cho phép để trống)
+  price        Float                         // Giá tiền dịch vụ
+  durationMin  Int                           // Thời gian thực hiện tính bằng phút (Ví dụ: 30)
+  isActive     Boolean  @default(true)       // Trạng thái dịch vụ có đang kinh doanh không
+  createdAt    DateTime @default(now())      // Ngày tạo dữ liệu
+  appointments Appointment[] // Một dịch vụ có thể nằm trong nhiều lịch hẹn
+
+}
+
+// Định nghĩa các trạng thái của một lịch hẹn
+enum AppointmentStatus {
+  PENDING     // Đang chờ Admin duyệt
+  CONFIRMED   // Đã duyệt thành công
+  CANCELLED   // Đã bị hủy
+  COMPLETED   // Đã hoàn thành xong dịch vụ
+}
+
+model Appointment {
+  id          String            @id @default(uuid())
+  dateTime    DateTime          // Ngày và giờ khách đặt lịch
+  status      AppointmentStatus @default(PENDING) // Mặc định tạo xong sẽ chờ duyệt
+  notes       String?           // Ghi chú của khách (cho phép để trống)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  // Mối quan hệ 1: Một lịch hẹn bắt buộc phải thuộc về 1 khách hàng (User)
+  customerId  String
+  customer    User              @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  // Mối quan hệ 2: Một lịch hẹn bắt buộc phải chọn 1 dịch vụ (Service)
+  serviceId   String
+  service     Service           @relation(fields: [serviceId], references: [id])
+}
+

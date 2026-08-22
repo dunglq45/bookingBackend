@@ -1,0 +1,61 @@
+### API 1: Đăng ký tài khoản (Dùng email mới nếu bị trùng)
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+    "email": "admin2026@gmail.com",
+    "password": "123",
+    "fullName": "Quản Trị Viên Đẹp Trai"
+}
+
+
+### API 2: Đăng nhập để lấy Token
+# @name loginRequest
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{
+    "email": "lap_trinh_vien_pro@gmail.com",
+    "password": "matkhaucuatoi"
+}
+
+### Lấy chuỗi token tự động từ kết quả của API 2 ở trên
+@token = {{loginRequest.response.body.access_token}}
+
+
+### API 3: Thử lấy danh sách khi CHƯA có token (Sẽ bị lỗi 401 chặn lại)
+GET http://localhost:3000/users
+
+
+### API 4: Lấy danh sách thành công bằng biến Token tự động sạch sẽ
+GET http://localhost:3000/users
+Authorization: Bearer {{token}}
+
+### API 5: Tạo thử một dịch vụ mẫu vào Database
+POST http://localhost:3000/services
+Content-Type: application/json
+
+{
+    "name": "Cắt tóc chuẩn Barber Shop",
+    "description": "Bao gồm gội đầu, massage mặt và tư vấn tạo kiểu",
+    "price": 150000,
+    "durationMin": 45
+}
+
+### API 6: Lấy danh sách toàn bộ dịch vụ đang có
+GET http://localhost:3000/services
+
+### API 7: Khách hàng tiến hành đặt lịch hẹn (Bắt buộc phải chạy API 2 Đăng nhập trước để lấy Token)
+POST http://localhost:3000/appointments
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "dateTime": "2026-09-15T14:30:00.000Z",
+    "serviceId": "62601530-1cea-4ec2-a84b-46e6a840261c",
+    "notes": "Tôi muốn đặt lịch cắt tóc vào khung giờ chiều"
+}
+
+### API 8: Lấy danh sách toàn bộ lịch hẹn đang có
+GET http://localhost:3000/appointments
+Authorization: Bearer {{token}}

@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 1. BẢNG USER (Phải giữ lại để chạy tính năng Đăng nhập/Đăng ký)
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  fullName  String
+  role      Role     @default(CUSTOMER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// 2. BẢNG SERVICE (Bảng mới chúng ta cần thêm vào hôm nay)
+model Service {
+  id          String   @id @default(uuid()) // Tự sinh mã ID chuỗi bảo mật
+  name        String // Tên dịch vụ (Ví dụ: Cắt tóc nam)
+  description String? // Mô tả chi tiết dịch vụ (cho phép để trống)
+  price       Float // Giá tiền dịch vụ
+  durationMin Int // Thời gian thực hiện tính bằng phút (Ví dụ: 30)
+  isActive    Boolean  @default(true) // Trạng thái dịch vụ có đang kinh doanh không
+  createdAt   DateTime @default(now()) // Ngày tạo dữ liệu
+}
