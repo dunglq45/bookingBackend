@@ -11,15 +11,21 @@ export class AuthService {
   ) {}
 
   async login(email: string, pass: string) {
+    console.log('--- DEBUG LOGIN ---');
+    console.log('Email nhan duoc:', email);
+    console.log('Pass nhan duoc:', pass);
     // 1. Kiểm tra xem người dùng có tồn tại trong hệ thống không
     const user = await this.usersService.findByEmail(email);
+    console.log('User tim thay trong DB:', user);
     if (!user) {
+      console.log('==> KHONG TIM THAY USER');
       throw new UnauthorizedException('Email hoặc mật khẩu không chính xác!');
     }
 
     // 2. So sánh mật khẩu thô gửi lên với mật khẩu đã băm trong database
     const isMatch = await bcrypt.compare(pass, user.password);
     if (!isMatch) {
+      console.log('==> MAT KHAU KHONG MATCH');
       throw new UnauthorizedException('Email hoặc mật khẩu không chính xác!');
     }
 
