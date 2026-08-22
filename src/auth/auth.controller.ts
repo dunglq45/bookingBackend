@@ -22,8 +22,11 @@ export class AuthController {
   // async login(@Body() body: any) {
   //   return this.authService.login(body.email, body.password);
   // }
-  async login(@Body() body: { email: string; pass: string }) {
+  async login(@Body() body: any) {
     // Lưu ý: Kiểm tra key gửi từ Frontend/Swagger truyền đúng vào tham số
-    return this.authService.login(body.email, body.pass || body['password']);
+    // Lấy password từ body.password hoặc body.pass để không bao giờ bị undefined
+    const passwordInput = body.password || body.pass;
+    return this.authService.login(body.email, passwordInput);
+    // return this.authService.login(body.email, body.pass || body['password']);
   }
 }
