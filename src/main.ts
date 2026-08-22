@@ -12,7 +12,7 @@ async function bootstrap() {
       'http://localhost:3000',
       // Thay đường dẫn bên dưới bằng Domain Web Angular của bạn sau khi deploy (Vercel/Netlify/Custom Domain)
       // 'https://ten-mien-web-angular-cua-ban.vercel.app', 
-      'https://booking-frontend-xxx.vercel.app', // Domain Vercel thật của bạn
+      'https://booking-frontend-two-pearl.vercel.app/' // Domain Vercel thật của bạn
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
