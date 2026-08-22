@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,6 +16,16 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
+  // 🌟 CẤU HÌNH SWAGGER UI
+  const config = new DocumentBuilder()
+    .setTitle('Booking API Docs')
+    .setDescription('Danh sách REST API cho ứng dụng Booking')
+    .setVersion('1.0')
+    .addBearerAuth() // Đăng ký xác thực Bearer Token (JWT) nếu dự án có dùng Auth
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document); // Đường dẫn truy cập UI: /api/docs
 
   // Sử dụng process.env.PORT do Render cấp, fallback về 3000 khi dev local
   const port = process.env.PORT || 3000;
